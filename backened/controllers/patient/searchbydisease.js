@@ -6,7 +6,7 @@ import { Doctor } from "../../models/hospitalmodel/doctor.models.js";
 
 const searchHospitalByDisease = async (req, res) => {
     try {
-        console.log("called")
+       
         const { disease } = req.body;
 
         if (!disease) {
