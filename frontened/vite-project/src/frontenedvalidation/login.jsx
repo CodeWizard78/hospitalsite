@@ -1,8 +1,3 @@
-
-
-
-
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
@@ -42,7 +37,15 @@ const Login = ({ userType }) => {
             console.log('Login successful:', data);
             localStorage.setItem("token", data.accessToken);
             setUsername(formData.username);
-            navigate('/hospital-details');
+
+            // Navigate to appropriate dashboard
+            if (userType === 'hospital') {
+                navigate('/hospital-details');
+            } else if (userType === 'patient') {
+                navigate('/patient-dashboard'); // Navigate to patient dashboard
+            } else {
+                navigate('/dashboard');
+            }
         } catch (error) {
             console.error('Login failed:', error.message);
             setError(error.message);

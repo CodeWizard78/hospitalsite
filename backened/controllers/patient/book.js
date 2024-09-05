@@ -9,12 +9,6 @@ const bookDoctorAndBed = async (req, res) => {
         
         console.log("Searching for doctor with:", { disease, hospitalId });
 
-        const doctorsInHospital = await Doctor.find({ hospital: hospitalId });
-        console.log(`Found ${doctorsInHospital.length} doctors in hospital ${hospitalId}`);
-
-        const doctorsWithSpecialty = await Doctor.find({ hospital: hospitalId, specialty: disease });
-        console.log(`Found ${doctorsWithSpecialty.length} doctors with specialty ${disease} in hospital ${hospitalId}`);
-
         const doctor = await Doctor.findOne({
             specialty: disease,
             hospital: hospitalId,
@@ -31,12 +25,6 @@ const bookDoctorAndBed = async (req, res) => {
         // Debug bed search
         console.log("Searching for bed with:", { disease, hospitalId });
         
-        const allBeds = await Bed.find({ hospital: hospitalId });
-        console.log(`Found ${allBeds.length} total beds in hospital ${hospitalId}`);
-
-        const bedsWithType = await Bed.find({ hospital: hospitalId, type: disease });
-        console.log(`Found ${bedsWithType.length} beds of type ${disease} in hospital ${hospitalId}`);
-
         const bed = await Bed.findOne({
             hospital: hospitalId,
             type: disease,
@@ -50,13 +38,16 @@ const bookDoctorAndBed = async (req, res) => {
         
         console.log("Bed found:", bed);
 
+        // Update bed status
         bed.status = "occupied";
         bed.patient = patientId;
         await bed.save();
         
+        // Update doctor availability
         doctor.availability = false;
         await doctor.save();
         
+        // Update patient status
         await Patient.findByIdAndUpdate(patientId, {
             hospital: hospitalId,
             status: "under treatment",
